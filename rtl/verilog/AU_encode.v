@@ -42,7 +42,7 @@ module AU_encode #(
         //     z(1) = a(7) or a(6) or a(3) or a(2)
         //     z(2) = a(7) or a(6) or a(5) or a(4)
         // indices correspond to position of black nodes in Sklansky parallel-prefix algorithm
-        for (l = 1; l <= M; l = l + 1) begin : g_outbit
+        for (l = 1; l <= M; l = l + 1) begin : g_bits
             reg zv;
             integer k, i;
 
