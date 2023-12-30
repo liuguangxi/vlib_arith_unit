@@ -15,3 +15,5 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_decode
 * Binary to one-hot decoder
 
+### AU_bin2gray
+* Binary to Gray converter
