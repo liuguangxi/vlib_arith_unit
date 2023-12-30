@@ -17,3 +17,6 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 
 ### AU_bin2gray
 * Binary to Gray converter
+
+### AU_prefix_xor
+* Prefix XOR
