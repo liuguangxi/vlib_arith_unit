@@ -1,7 +1,8 @@
 //==============================================================================
-// AU_inc_gray.v
+// AU_inc_gray_c.v
 //
-// Incrementer for Gray numbers using parallel-prefix propagate-lookahead logic.
+// Incrementer for Gray numbers using parallel-prefix propagate-lookahead logic
+// with carry-in.
 // Bases on the following algorithm (n >= 3):
 //     p = a(n-1) xor a(n-2) xor ... xor a(0)
 //     z(0) = a(0) xnor p
@@ -16,13 +17,14 @@
 //==============================================================================
 
 
-module AU_inc_gray #(
+module AU_inc_gray_c #(
     parameter integer WIDTH = 8,  // word length of input (>= 1)
     parameter integer ARCH  = 0   // architecture (0 to 2)
 ) (
     // Data interface
-    input  [WIDTH-1:0] a,  // Gray coded input data
-    output [WIDTH-1:0] z   // Gray coded output data
+    input  [WIDTH-1:0] a,   // Gray coded input data
+    input              ci,  // carry-in
+    output [WIDTH-1:0] z    // Gray coded output data
 );
 
 
@@ -45,9 +47,9 @@ module AU_inc_gray #(
         if (WIDTH >= 2) begin : g_pi_2
             // Feed slow p signal into prefix circuit for slow architecture
             if (ARCH == 0) begin : g_arch_0
-                assign pi[0] = p;
+                assign pi[0] = p & ci;
             end else begin : g_arch_gt0
-                assign pi[0] = 1'b1;
+                assign pi[0] = ci;
             end
         end
 
@@ -77,15 +79,15 @@ module AU_inc_gray #(
             end
         end
         if (WIDTH == 2) begin : g_t2_2
-            assign t2[1] = p;
+            assign t2[1] = p & ci;
         end
         if (WIDTH >= 3) begin : g_t2_3
-            assign t2[1] = a[0] & p;
+            assign t2[1] = a[0] & p & ci;
         end
         if (WIDTH == 1) begin : g_t2_4
-            assign t2[0] = 1'b1;
+            assign t2[0] = ci;
         end else begin : g_t2_4
-            assign t2[0] = ~p;
+            assign t2[0] = (~p) & ci;
         end
 
         // Calculate result bits
