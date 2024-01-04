@@ -9,14 +9,20 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 
 ## Components List
 
+### AU_prefix_and
+* Prefix AND
+
+### AU_prefix_or
+* Prefix OR
+
+### AU_prefix_xor
+* Prefix XOR
+
 ### AU_encode
 * One-hot to binary encoder
 
 ### AU_decode
 * Binary to one-hot decoder
-
-### AU_prefix_xor
-* Prefix XOR
 
 ### AU_bin2gray
 * Binary to Gray converter
@@ -24,3 +30,7 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_gray2bin
 * Gray to binary converter
 * Dependency: AU_prefix_xor
+
+### AU_inc_gray
+* Gray incrementer
+* Dependency: AU_prefix_and

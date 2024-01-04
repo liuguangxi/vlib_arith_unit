@@ -1,8 +1,8 @@
 //==============================================================================
-// AU_gray2bin_ref.v
+// AU_inc_gray_ref.v
 //
-// Behavioral model of AU_gray2bin.
-// Converts a number from Gray to binary representation.
+// Behavioral model of AU_inc_gray.
+// Incrementer for Gray numbers using parallel-prefix propagate-lookahead logic.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -11,28 +11,36 @@
 //==============================================================================
 
 
-module AU_gray2bin_ref #(
+module AU_inc_gray_ref #(
     parameter integer WIDTH = 8,  // word length of input (>= 1)
     parameter integer ARCH  = 0   // architecture (0 to 2)
 ) (
     // Data interface
-    input  [WIDTH-1:0] g,  // Gray input data
-    output [WIDTH-1:0] b   // binary output data
+    input      [WIDTH-1:0] a,  // Gray coded input data
+    output reg [WIDTH-1:0] z   // Gray coded output data
 );
 
 
     // Behavioral model
     reg [WIDTH:0] bv;
+    wire [WIDTH:0] zv;
     integer i;
 
     always @(*) begin
         bv[WIDTH] = 1'b0;
         for (i = WIDTH - 1; i >= 0; i = i - 1) begin
-            bv[i] = bv[i + 1] ^ g[i];
+            bv[i] = bv[i + 1] ^ a[i];
         end
     end
 
-    assign b = bv[WIDTH-1:0];
+    assign zv[WIDTH - 1 : 0] = bv[WIDTH - 1 : 0] + 1'b1;
+    assign zv[WIDTH] = 1'b0;
+
+    always @(*) begin
+        for (i = 0; i <= WIDTH - 1; i = i + 1) begin
+            z[i] = zv[i + 1] ^ zv[i];
+        end
+    end
 
 
     // Parameter legality check
