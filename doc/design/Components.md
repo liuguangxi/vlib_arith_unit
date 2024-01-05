@@ -42,3 +42,7 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_lead_zero_det
 * Leading zeros detector (LZD)
 * Dependency: AU_prefix_and
+
+### AU_lead_one_det
+* Leading ones detector (LOD)
+* Dependency: AU_prefix_and

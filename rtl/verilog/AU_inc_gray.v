@@ -84,7 +84,7 @@ module AU_inc_gray #(
         end
         if (WIDTH == 1) begin : g_t2_4
             assign t2[0] = 1'b1;
-        end else begin : g_t2_4
+        end else begin : g_t2_5
             assign t2[0] = ~p;
         end
 
