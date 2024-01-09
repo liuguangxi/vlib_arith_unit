@@ -47,6 +47,10 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Leading ones detector (LOD)
 * Dependency: AU_prefix_and
 
+### AU_lead_sign_det
+* Leading signs detector (LSD)
+* Dependency: AU_prefix_and
+
 ### AU_int_log2
 * Integer logarithm to base 2
 * Dependency: AU_lead_zero_det, AU_prefix_and, AU_encode
