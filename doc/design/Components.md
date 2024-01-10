@@ -18,6 +18,9 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_prefix_xor
 * Prefix XOR
 
+### AU_prefix_and_or
+* Prefix AND-OR
+
 ### AU_encode
 * One-hot to binary encoder
 
