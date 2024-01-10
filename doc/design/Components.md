@@ -57,3 +57,7 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_int_log2
 * Integer logarithm to base 2
 * Dependency: AU_lead_zero_det, AU_prefix_and, AU_encode
+
+### AU_add
+* Adder
+* Dependency: AU_prefix_and_or

@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_prefix_and_or.sv
+// tb_AU_add.sv
 //
-// Testbench of module AU_prefix_and_or.
+// Testbench of module AU_add.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_prefix_and_or;
+module tb_AU_add;
 
 
     //------------------------------------------------------------------------------
@@ -30,51 +30,46 @@ module tb_AU_prefix_and_or;
 
 
     // Signals
-    logic [Width-1:0] gi;  // generate input data
-    logic [Width-1:0] pi;  // propagate input data
-    logic [Width-1:0] go;  // generate output data
-    logic [Width-1:0] po;  // propagate output data
-    logic [Width-1:0] go_ref;  // reference generate output data
-    logic [Width-1:0] po_ref;  // reference propagate output data
+    logic [Width-1:0] a;  // augend
+    logic [Width-1:0] b;  // addend
+    logic [Width-1:0] s;  // sum
+    logic [Width-1:0] s_ref;  // reference sum
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_prefix_and_or #(
+    AU_add #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut (
-        .gi(gi),
-        .pi(pi),
-        .go(go),
-        .po(po)
+        .a(a),
+        .b(b),
+        .s(s)
     );
 
-    AU_prefix_and_or_ref #(
+    AU_add_ref #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut_ref (
-        .gi(gi),
-        .pi(pi),
-        .go(go_ref),
-        .po(po_ref)
+        .a(a),
+        .b(b),
+        .s(s_ref)
     );
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Test single case
-    task automatic test_single(logic [Width-1:0] gi_in, logic [Width-1:0] pi_in);
+    task automatic test_single(logic [Width-1:0] a_in, logic [Width-1:0] b_in);
         #(Cycle);
-        gi = gi_in;
-        pi = pi_in;
+        a = a_in;
+        b = b_in;
 
         #(Cycle);
         num_test++;
-        if (go !== go_ref || po !== po_ref) begin
-            $display("Fail    gi(h_%0h)  pi(h_%0h)  go(h_%0h)  po(h_%0h)  go_ref(h_%0h)  po_ref(h_%0h)",
-                     gi, pi, go, po, go_ref, po_ref);
+        if (s !== s_ref) begin
+            $display("Fail    a(h_%0h)  b(h_%0h)  s(h_%0h)  s_ref(h_%0h)", a, b, s, s_ref);
             num_fail++;
         end
     endtask
@@ -82,16 +77,16 @@ module tb_AU_prefix_and_or;
 
     // Test exhaustive cases
     task automatic test_exhaustive;
-        logic [Width-1:0] gi_in;
-        logic [Width-1:0] pi_in;
+        logic [Width-1:0] a_in;
+        logic [Width-1:0] b_in;
         int i, j;
 
         // Exhaustive tests
         for (i = 0; i <= 2 ** Width - 1; i++) begin
             for (j = 0; j <= 2 ** Width - 1; j++) begin
-                gi_in = i;
-                pi_in = j;
-                test_single(gi_in, pi_in);
+                a_in = i;
+                b_in = j;
+                test_single(a_in, b_in);
             end
         end
     endtask
@@ -99,8 +94,8 @@ module tb_AU_prefix_and_or;
 
     // Test random cases
     task automatic test_random;
-        logic [Width-1:0] gi_in;
-        logic [Width-1:0] pi_in;
+        logic [Width-1:0] a_in;
+        logic [Width-1:0] b_in;
         int i;
 
         // Special tests
@@ -111,9 +106,9 @@ module tb_AU_prefix_and_or;
 
         // Random tests
         for (i = 1; i <= Nrandom; i++) begin
-            assert (std::randomize(gi_in));
-            assert (std::randomize(pi_in));
-            test_single(gi_in, pi_in);
+            assert (std::randomize(a_in));
+            assert (std::randomize(b_in));
+            test_single(a_in, b_in);
         end
     endtask
 
@@ -146,8 +141,8 @@ module tb_AU_prefix_and_or;
         num_test = 0;
         num_fail = 0;
 
-        gi = 'b0;
-        pi = 'b0;
+        a = 'b0;
+        b = 'b0;
 
         #(Cycle * 10);
         if (Width <= 8) begin
