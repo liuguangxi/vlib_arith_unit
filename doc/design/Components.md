@@ -58,13 +58,6 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Integer logarithm to base 2
 * Dependency: AU_lead_zero_det, AU_prefix_and, AU_encode
 
-### AU_full_adder
-* Full adder
-
-### AU_add
-* Adder
-* Dependency: AU_prefix_and_or
-
 ### AU_inc
 * Incrementer
 * Dependency: AU_prefix_and
@@ -76,3 +69,18 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_incdec
 * Incrementer-Decrementer
 * Dependency: AU_prefix_and
+
+### AU_full_adder
+* Full adder
+
+### AU_add
+* Adder
+* Dependency: AU_prefix_and_or
+
+### AU_sub
+* Subtractor
+* Dependency: AU_prefix_and_or
+
+### AU_addsub
+* Adder-Subtractor
+* Dependency: AU_prefix_and_or

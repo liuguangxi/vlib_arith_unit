@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_incdec.sv
+// tb_AU_sub.sv
 //
-// Testbench of module AU_incdec.
+// Testbench of module AU_sub.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_incdec;
+module tb_AU_sub;
 
 
     //------------------------------------------------------------------------------
@@ -30,46 +30,46 @@ module tb_AU_incdec;
 
 
     // Signals
-    logic [Width-1:0] a;  // input data
-    logic inc_dec;  // control, 0:increment, 1:decrement
-    logic [Width-1:0] z;  // increment or decrement
-    logic [Width-1:0] z_ref;  // reference increment or decrement
+    logic [Width-1:0] a;  // minuend
+    logic [Width-1:0] b;  // subtrahend
+    logic [Width-1:0] s;  // difference
+    logic [Width-1:0] s_ref;  // reference difference
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_incdec #(
+    AU_sub #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut (
-        .a      (a),
-        .inc_dec(inc_dec),
-        .z      (z)
+        .a(a),
+        .b(b),
+        .s(s)
     );
 
-    AU_incdec_ref #(
+    AU_sub_ref #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut_ref (
-        .a      (a),
-        .inc_dec(inc_dec),
-        .z      (z_ref)
+        .a(a),
+        .b(b),
+        .s(s_ref)
     );
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Test single case
-    task automatic test_single(logic [Width-1:0] a_in, logic inc_dec_in);
+    task automatic test_single(logic [Width-1:0] a_in, logic [Width-1:0] b_in);
         #(Cycle);
         a = a_in;
-        inc_dec = inc_dec_in;
+        b = b_in;
 
         #(Cycle);
         num_test++;
-        if (z !== z_ref) begin
-            $display("Fail    a(h_%0h)  inc_dec(b_%0b)  z(h_%0h)  z_ref(h_%0h)", a, inc_dec, z, z_ref);
+        if (s !== s_ref) begin
+            $display("Fail    a(h_%0h)  b(h_%0h)  s(h_%0h)  s_ref(h_%0h)", a, b, s, s_ref);
             num_fail++;
         end
     endtask
@@ -78,13 +78,16 @@ module tb_AU_incdec;
     // Test exhaustive cases
     task automatic test_exhaustive;
         logic [Width-1:0] a_in;
-        int i;
+        logic [Width-1:0] b_in;
+        int i, j;
 
         // Exhaustive tests
         for (i = 0; i <= 2 ** Width - 1; i++) begin
-            a_in = i;
-            test_single(a_in, 1'b0);
-            test_single(a_in, 1'b1);
+            for (j = 0; j <= 2 ** Width - 1; j++) begin
+                a_in = i;
+                b_in = j;
+                test_single(a_in, b_in);
+            end
         end
     endtask
 
@@ -92,20 +95,20 @@ module tb_AU_incdec;
     // Test random cases
     task automatic test_random;
         logic [Width-1:0] a_in;
-        logic inc_dec_in;
+        logic [Width-1:0] b_in;
         int i;
 
         // Special tests
-        test_single({Width{1'b0}}, 1'b0);
-        test_single({Width{1'b0}}, 1'b1);
-        test_single({Width{1'b1}}, 1'b0);
-        test_single({Width{1'b1}}, 1'b1);
+        test_single({Width{1'b0}}, {Width{1'b0}});
+        test_single({Width{1'b0}}, {Width{1'b1}});
+        test_single({Width{1'b1}}, {Width{1'b0}});
+        test_single({Width{1'b1}}, {Width{1'b1}});
 
         // Random tests
         for (i = 1; i <= Nrandom; i++) begin
             assert (std::randomize(a_in));
-            assert (std::randomize(inc_dec_in));
-            test_single(a_in, inc_dec_in);
+            assert (std::randomize(b_in));
+            test_single(a_in, b_in);
         end
     endtask
 
@@ -139,10 +142,10 @@ module tb_AU_incdec;
         num_fail = 0;
 
         a = 'b0;
-        inc_dec = 'b0;
+        b = 'b0;
 
         #(Cycle * 10);
-        if (Width <= 16) begin
+        if (Width <= 8) begin
             test_exhaustive;
         end else begin
             test_random;
