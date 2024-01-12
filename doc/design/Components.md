@@ -84,3 +84,6 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_addsub
 * Adder-Subtractor
 * Dependency: AU_prefix_and_or
+
+### AU_sum_zero_det
+* Fast zero-sum detector
