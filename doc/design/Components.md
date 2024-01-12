@@ -3,7 +3,6 @@
 
 ## Introduction
 The library contains units for a comprehensive set of arithmetic operations. The units are made available as circuit generators implemented in parameterized structural and synthesizable Verilog code.
-
 The Verilog code could be supported by recent synthesis and simulation tools, like Vivado, Design Compiler, ModelSim, VCS and so on.
 
 
@@ -80,6 +79,14 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 ### AU_sub
 * Subtractor
 * Dependency: AU_prefix_and_or
+
+### AU_neg
+* Two's complementer
+* Dependency: AU_prefix_and
+
+### AU_absval
+* Absolute value
+* Dependency: AU_prefix_and
 
 ### AU_addsub
 * Adder-Subtractor
