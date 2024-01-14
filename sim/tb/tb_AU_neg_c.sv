@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_addsub.sv
+// tb_AU_neg_c.sv
 //
-// Testbench of module AU_addsub.
+// Testbench of module AU_neg_c.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_addsub;
+module tb_AU_neg_c;
 
 
     //------------------------------------------------------------------------------
@@ -31,49 +31,45 @@ module tb_AU_addsub;
 
     // Signals
     logic [Width-1:0] a;  // input data
-    logic [Width-1:0] b;  // input data
-    logic add_sub;  // control, 0:addition, 1:subtraction
-    logic [Width-1:0] s;  // sum or difference
-    logic [Width-1:0] s_ref;  // reference sum or difference
+    logic neg;  // negation enable
+    logic [Width-1:0] z;  // result
+    logic [Width-1:0] z_ref;  // reference result
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_addsub #(
+    AU_neg_c #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut (
-        .a      (a),
-        .b      (b),
-        .add_sub(add_sub),
-        .s      (s)
+        .a  (a),
+        .neg(neg),
+        .z  (z)
     );
 
-    AU_addsub_ref #(
+    AU_neg_c_ref #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut_ref (
-        .a      (a),
-        .b      (b),
-        .add_sub(add_sub),
-        .s      (s_ref)
+        .a  (a),
+        .neg(neg),
+        .z  (z_ref)
     );
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Test single case
-    task automatic test_single(logic [Width-1:0] a_in, logic [Width-1:0] b_in, logic add_sub_in);
+    task automatic test_single(logic [Width-1:0] a_in, logic neg_in);
         #(Cycle);
         a = a_in;
-        b = b_in;
-        add_sub = add_sub_in;
+        neg = neg_in;
 
         #(Cycle);
         num_test++;
-        if (s !== s_ref) begin
-            $display("Fail    a(h_%0h)  b(h_%0h)  add_sub(b_%0b)  s(h_%0h)  s_ref(h_%0h)", a, b, add_sub, s, s_ref);
+        if (z !== z_ref) begin
+            $display("Fail    a(h_%0h)  neg(b_%0b)  z(h_%0h)  z_ref(h_%0h)", a, neg, z, z_ref);
             num_fail++;
         end
     endtask
@@ -82,17 +78,14 @@ module tb_AU_addsub;
     // Test exhaustive cases
     task automatic test_exhaustive;
         logic [Width-1:0] a_in;
-        logic [Width-1:0] b_in;
-        int i, j;
+        logic neg_in;
+        int i;
 
         // Exhaustive tests
         for (i = 0; i <= 2 ** Width - 1; i++) begin
-            for (j = 0; j <= 2 ** Width - 1; j++) begin
-                a_in = i;
-                b_in = j;
-                test_single(a_in, b_in, 1'b0);
-                test_single(a_in, b_in, 1'b1);
-            end
+            a_in = i;
+            test_single(a_in, 1'b0);
+            test_single(a_in, 1'b1);
         end
     endtask
 
@@ -100,26 +93,20 @@ module tb_AU_addsub;
     // Test random cases
     task automatic test_random;
         logic [Width-1:0] a_in;
-        logic [Width-1:0] b_in;
-        logic add_sub_in;
+        logic neg_in;
         int i;
 
         // Special tests
-        test_single({Width{1'b0}}, {Width{1'b0}}, 1'b0);
-        test_single({Width{1'b0}}, {Width{1'b0}}, 1'b1);
-        test_single({Width{1'b0}}, {Width{1'b1}}, 1'b0);
-        test_single({Width{1'b0}}, {Width{1'b1}}, 1'b1);
-        test_single({Width{1'b1}}, {Width{1'b0}}, 1'b0);
-        test_single({Width{1'b1}}, {Width{1'b0}}, 1'b1);
-        test_single({Width{1'b1}}, {Width{1'b1}}, 1'b0);
-        test_single({Width{1'b1}}, {Width{1'b1}}, 1'b1);
+        test_single({Width{1'b0}}, 1'b0);
+        test_single({Width{1'b0}}, 1'b1);
+        test_single({Width{1'b1}}, 1'b0);
+        test_single({Width{1'b1}}, 1'b1);
 
         // Random tests
         for (i = 1; i <= Nrandom; i++) begin
             assert (std::randomize(a_in));
-            assert (std::randomize(b_in));
-            assert (std::randomize(add_sub_in));
-            test_single(a_in, b_in, add_sub_in);
+            assert (std::randomize(neg_in));
+            test_single(a_in, neg_in);
         end
     endtask
 
@@ -153,11 +140,10 @@ module tb_AU_addsub;
         num_fail = 0;
 
         a = 'b0;
-        b = 'b0;
-        add_sub = 'b0;
+        neg = 1'b0;
 
         #(Cycle * 10);
-        if (Width <= 8) begin
+        if (Width <= 16) begin
             test_exhaustive;
         end else begin
             test_random;

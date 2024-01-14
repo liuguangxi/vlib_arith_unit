@@ -61,12 +61,24 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Incrementer
 * Dependency: AU_prefix_and
 
+### AU_inc_c
+* Incrementer with carry-in and carry-out
+* Dependency: AU_prefix_and
+
 ### AU_dec
 * Decrementer
 * Dependency: AU_prefix_and
 
+### AU_dec_c
+* Decrementer with carry-in and carry-out
+* Dependency: AU_prefix_and
+
 ### AU_incdec
 * Incrementer-Decrementer
+* Dependency: AU_prefix_and
+
+### AU_incdec_c
+* Incrementer-Decrementer with carry-in and carry-out
 * Dependency: AU_prefix_and
 
 ### AU_full_adder
@@ -81,11 +93,15 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Dependency: AU_prefix_and_or
 
 ### AU_neg
-* Two's complementer
+* 2's complementer
+* Dependency: AU_prefix_and
+
+### AU_neg_c
+* Conditional 2's complementer
 * Dependency: AU_prefix_and
 
 ### AU_absval
-* Absolute value
+* Absolute value for 2's compl.
 * Dependency: AU_prefix_and
 
 ### AU_addsub

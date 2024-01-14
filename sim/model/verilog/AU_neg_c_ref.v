@@ -1,8 +1,8 @@
 //==============================================================================
-// AU_absval_ref.v
+// AU_neg_c_ref.v
 //
-// Behavioral model of AU_absval.
-// Computes the absolute value using a parallel-prefix 2's complementer.
+// Behavioral model of AU_neg_c.
+// Conditional 2's complementer using parallel-prefix propagate-lookahead logic.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -11,18 +11,19 @@
 //==============================================================================
 
 
-module AU_absval_ref #(
+module AU_neg_c_ref #(
     parameter integer WIDTH = 8,  // word length of input (>= 1)
     parameter integer ARCH  = 0   // architecture (0 to 2)
 ) (
     // Data interface
-    input  [WIDTH-1:0] a,  // input data
-    output [WIDTH-1:0] z   // absolute value
+    input  [WIDTH-1:0] a,    // input data
+    input              neg,  // negation enable
+    output [WIDTH-1:0] z     // result
 );
 
 
     // Behavioral model
-    assign z = (a[WIDTH - 1] == 1'b0) ? a : -a;
+    assign z = (neg == 1'b0) ? a : -a;
 
 
     // Parameter legality check

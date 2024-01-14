@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_addsub.sv
+// tb_AU_inc_c.sv
 //
-// Testbench of module AU_addsub.
+// Testbench of module AU_inc_c.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_addsub;
+module tb_AU_inc_c;
 
 
     //------------------------------------------------------------------------------
@@ -31,49 +31,50 @@ module tb_AU_addsub;
 
     // Signals
     logic [Width-1:0] a;  // input data
-    logic [Width-1:0] b;  // input data
-    logic add_sub;  // control, 0:addition, 1:subtraction
-    logic [Width-1:0] s;  // sum or difference
-    logic [Width-1:0] s_ref;  // reference sum or difference
+    logic ci;  // carry-in
+    logic [Width-1:0] z;  // increment
+    logic co;  // carry-out
+    logic [Width-1:0] z_ref;  // reference increment
+    logic co_ref;  // reference carry-out
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_addsub #(
+    AU_inc_c #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut (
-        .a      (a),
-        .b      (b),
-        .add_sub(add_sub),
-        .s      (s)
+        .a (a),
+        .ci(ci),
+        .z (z),
+        .co(co)
     );
 
-    AU_addsub_ref #(
+    AU_inc_c_ref #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut_ref (
-        .a      (a),
-        .b      (b),
-        .add_sub(add_sub),
-        .s      (s_ref)
+        .a (a),
+        .ci(ci),
+        .z (z_ref),
+        .co(co_ref)
     );
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Test single case
-    task automatic test_single(logic [Width-1:0] a_in, logic [Width-1:0] b_in, logic add_sub_in);
+    task automatic test_single(logic [Width-1:0] a_in, logic ci_in);
         #(Cycle);
         a = a_in;
-        b = b_in;
-        add_sub = add_sub_in;
+        ci = ci_in;
 
         #(Cycle);
         num_test++;
-        if (s !== s_ref) begin
-            $display("Fail    a(h_%0h)  b(h_%0h)  add_sub(b_%0b)  s(h_%0h)  s_ref(h_%0h)", a, b, add_sub, s, s_ref);
+        if (z !== z_ref) begin
+            $display("Fail    a(h_%0h)  ci(b_%0b)  z(h_%0h)  co(b_%0b)  z_ref(h_%0h)  co_ref(b_%0b)",
+                     a, ci, z, co, z_ref, co_ref);
             num_fail++;
         end
     endtask
@@ -82,17 +83,13 @@ module tb_AU_addsub;
     // Test exhaustive cases
     task automatic test_exhaustive;
         logic [Width-1:0] a_in;
-        logic [Width-1:0] b_in;
-        int i, j;
+        int i;
 
         // Exhaustive tests
         for (i = 0; i <= 2 ** Width - 1; i++) begin
-            for (j = 0; j <= 2 ** Width - 1; j++) begin
-                a_in = i;
-                b_in = j;
-                test_single(a_in, b_in, 1'b0);
-                test_single(a_in, b_in, 1'b1);
-            end
+            a_in = i;
+            test_single(a_in, 1'b0);
+            test_single(a_in, 1'b1);
         end
     endtask
 
@@ -100,26 +97,20 @@ module tb_AU_addsub;
     // Test random cases
     task automatic test_random;
         logic [Width-1:0] a_in;
-        logic [Width-1:0] b_in;
-        logic add_sub_in;
+        logic ci_in;
         int i;
 
         // Special tests
-        test_single({Width{1'b0}}, {Width{1'b0}}, 1'b0);
-        test_single({Width{1'b0}}, {Width{1'b0}}, 1'b1);
-        test_single({Width{1'b0}}, {Width{1'b1}}, 1'b0);
-        test_single({Width{1'b0}}, {Width{1'b1}}, 1'b1);
-        test_single({Width{1'b1}}, {Width{1'b0}}, 1'b0);
-        test_single({Width{1'b1}}, {Width{1'b0}}, 1'b1);
-        test_single({Width{1'b1}}, {Width{1'b1}}, 1'b0);
-        test_single({Width{1'b1}}, {Width{1'b1}}, 1'b1);
+        test_single({Width{1'b0}}, 1'b0);
+        test_single({Width{1'b0}}, 1'b1);
+        test_single({Width{1'b1}}, 1'b0);
+        test_single({Width{1'b1}}, 1'b1);
 
         // Random tests
         for (i = 1; i <= Nrandom; i++) begin
             assert (std::randomize(a_in));
-            assert (std::randomize(b_in));
-            assert (std::randomize(add_sub_in));
-            test_single(a_in, b_in, add_sub_in);
+            assert (std::randomize(ci_in));
+            test_single(a_in, ci_in);
         end
     endtask
 
@@ -153,11 +144,10 @@ module tb_AU_addsub;
         num_fail = 0;
 
         a = 'b0;
-        b = 'b0;
-        add_sub = 'b0;
+        ci = 'b0;
 
         #(Cycle * 10);
-        if (Width <= 8) begin
+        if (Width <= 16) begin
             test_exhaustive;
         end else begin
             test_random;
