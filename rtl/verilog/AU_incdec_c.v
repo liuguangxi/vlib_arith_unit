@@ -28,7 +28,6 @@ module AU_incdec_c #(
     wire [WIDTH:0] ai;
     wire [WIDTH:0] po;
 
-
     // Invert a for increment/decrement
     assign ai = {a ^ {WIDTH{inc_dec}}, ci};
 

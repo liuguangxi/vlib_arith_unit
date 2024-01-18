@@ -110,3 +110,6 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 
 ### AU_sum_zero_det
 * Fast zero-sum detector
+
+## AU_cmp_eq
+* Equality comparator

@@ -27,7 +27,6 @@ module AU_inc_c #(
     wire [WIDTH:0] ai;
     wire [WIDTH:0] po;
 
-
     // Attach carry-in
     assign ai = {a, ci};
 

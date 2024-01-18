@@ -27,7 +27,6 @@ module AU_dec_c #(
     wire [WIDTH:0] ai;
     wire [WIDTH:0] po;
 
-
     // Invert a for decrement
     assign ai = {~a, ci};
 
