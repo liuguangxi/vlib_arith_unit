@@ -101,7 +101,7 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Dependency: AU_prefix_and
 
 ### AU_absval
-* Absolute value for 2's compl.
+* Absolute value for 2's compl
 * Dependency: AU_prefix_and
 
 ### AU_addsub
@@ -115,4 +115,9 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Equality comparator
 
 ## AU_cmp6_uns
-* 6-Function comparator
+* Unsigned 6-function comparator
+* Dependency: AU_prefix_and_or
+
+## AU_cmp6_sgn
+* Signed 6-function comparator
+* Dependency: AU_prefix_and_or
