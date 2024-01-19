@@ -113,3 +113,6 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 
 ## AU_cmp_eq
 * Equality comparator
+
+## AU_cmp6_uns
+* 6-Function comparator

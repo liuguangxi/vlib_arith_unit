@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_cmp_eq.sv
+// tb_AU_cmp6_uns.sv
 //
-// Testbench of module AU_cmp_eq.
+// Testbench of module AU_cmp6_uns.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,13 +13,14 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_cmp_eq;
+module tb_AU_cmp6_uns;
 
 
     //------------------------------------------------------------------------------
     // Parameters
     parameter real Cycle = 10.0;  // unit cycle
     parameter integer Width = 8;  // word length of input
+    parameter integer Arch = 0;  // architecture
     parameter integer Nrandom = 10000;  // number of random tests
 
 
@@ -29,29 +30,41 @@ module tb_AU_cmp_eq;
 
 
     // Signals
-    logic [Width-1:0] a;  // augend
-    logic [Width-1:0] b;  // addend
-    logic eq;  // equal output condition
-    logic eq_ref;  // reference equal output condition
+    logic [Width-1:0] a;  // input data
+    logic [Width-1:0] b;  // input data
+    logic [5:0] res;  // output condition
+    logic [5:0] res_ref;  // reference output condition
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_cmp_eq #(
-        .WIDTH(Width)
+    AU_cmp6_uns #(
+        .WIDTH(Width),
+        .ARCH (Arch)
     ) dut (
         .a (a),
         .b (b),
-        .eq(eq)
+        .lt(res[0]),
+        .gt(res[1]),
+        .eq(res[2]),
+        .le(res[3]),
+        .ge(res[4]),
+        .ne(res[5])
     );
 
-    AU_cmp_eq_ref #(
-        .WIDTH(Width)
+    AU_cmp6_uns_ref #(
+        .WIDTH(Width),
+        .ARCH (Arch)
     ) dut_ref (
         .a (a),
         .b (b),
-        .eq(eq_ref)
+        .lt(res_ref[0]),
+        .gt(res_ref[1]),
+        .eq(res_ref[2]),
+        .le(res_ref[3]),
+        .ge(res_ref[4]),
+        .ne(res_ref[5])
     );
     //------------------------------------------------------------------------------
 
@@ -65,8 +78,8 @@ module tb_AU_cmp_eq;
 
         #(Cycle);
         num_test++;
-        if (eq !== eq_ref) begin
-            $display("Fail    a(h_%0h)  b(h_%0h)  eq(b_%0b)  eq_ref(b_%0b)", a, b, eq, eq_ref);
+        if (res !== res_ref) begin
+            $display("Fail    a(h_%0h)  b(h_%0h)  res(b_%06b)  res_ref(b_%06b)", a, b, res, res_ref);
             num_fail++;
         end
     endtask
@@ -163,7 +176,7 @@ module tb_AU_cmp_eq;
     //------------------------------------------------------------------------------
     // Main process
     initial begin
-        $display("[INFO]  Simulation parameters: Width = %0d, Nrandom = %0d", Width, Nrandom);
+        $display("[INFO]  Simulation parameters: Width = %0d, Arch = %0d, Nrandom = %0d", Width, Arch, Nrandom);
 
         run_sim;
 

@@ -16,7 +16,7 @@ module AU_cmp_eq #(
     // Data interface
     input  [WIDTH-1:0] a,  // input data
     input  [WIDTH-1:0] b,  // input data
-    output [WIDTH-1:0] eq  // equal output condition
+    output             eq  // equal output condition
 );
 
 
