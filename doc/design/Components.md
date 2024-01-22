@@ -88,6 +88,14 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Adder
 * Dependency: AU_prefix_and_or
 
+### AU_add_c
+* Adder with carry-in and carry-out
+* Dependency: AU_prefix_and_or
+
+### AU_add_cfast
+* Adder with fast carry-in and carry-out
+* Dependency: AU_prefix_and_or
+
 ### AU_sub
 * Subtractor
 * Dependency: AU_prefix_and_or
