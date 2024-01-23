@@ -72,7 +72,7 @@ module tb_AU_dec_c;
 
         #(Cycle);
         num_test++;
-        if (z !== z_ref) begin
+        if (z !== z_ref || co !== co_ref) begin
             $display("Fail    a(h_%0h)  ci(b_%0b)  z(h_%0h)  co(b_%0b)  z_ref(h_%0h)  co_ref(b_%0b)",
                      a, ci, z, co, z_ref, co_ref);
             num_fail++;

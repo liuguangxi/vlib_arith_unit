@@ -1,7 +1,7 @@
 //==============================================================================
-// tb_AU_add_c.sv
+// tb_AU_add_v.sv
 //
-// Testbench of module AU_add_c.
+// Testbench of module AU_add_v.
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -13,7 +13,7 @@
 `timescale 1ns / 1ps
 
 
-module tb_AU_add_c;
+module tb_AU_add_v;
 
 
     //------------------------------------------------------------------------------
@@ -34,15 +34,15 @@ module tb_AU_add_c;
     logic [Width-1:0] b;  // addend
     logic ci;  // carry-in
     logic [Width-1:0] s;  // sum
-    logic co;  // carry-out
+    logic v;  // overflow flag
     logic [Width-1:0] s_ref;  // reference sum
-    logic co_ref;  // reference carry-out
+    logic v_ref;  // reference overflow flag
     //------------------------------------------------------------------------------
 
 
     //------------------------------------------------------------------------------
     // Instances
-    AU_add_c #(
+    AU_add_v #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut (
@@ -50,10 +50,10 @@ module tb_AU_add_c;
         .b (b),
         .ci(ci),
         .s (s),
-        .co(co)
+        .v (v)
     );
 
-    AU_add_c_ref #(
+    AU_add_v_ref #(
         .WIDTH(Width),
         .ARCH (Arch)
     ) dut_ref (
@@ -61,7 +61,7 @@ module tb_AU_add_c;
         .b (b),
         .ci(ci),
         .s (s_ref),
-        .co(co_ref)
+        .v (v_ref)
     );
     //------------------------------------------------------------------------------
 
@@ -76,9 +76,9 @@ module tb_AU_add_c;
 
         #(Cycle);
         num_test++;
-        if (s !== s_ref || co !== co_ref) begin
-            $display("Fail    a(h_%0h)  b(h_%0h)  ci(b_%0b)  s(h_%0h)  co(b_%0b)  s_ref(h_%0h)  co_ref(b_%0b)",
-                     a, b, ci, s, co, s_ref, co_ref);
+        if (s !== s_ref) begin
+            $display("Fail    a(h_%0h)  b(h_%0h)  ci(b_%0b)  s(h_%0h)  v(b_%0b)  s_ref(h_%0h)  v_ref(b_%0b)",
+                     a, b, ci, s, v, s_ref, v_ref);
             num_fail++;
         end
     endtask

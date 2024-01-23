@@ -96,6 +96,10 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Adder with fast carry-in and carry-out
 * Dependency: AU_prefix_and_or
 
+### AU_add_v
+* Adder with carry-in and 2's compl. overflow flag
+* Dependency: AU_prefix_and_or
+
 ### AU_sub
 * Subtractor
 * Dependency: AU_prefix_and_or
@@ -109,7 +113,7 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Dependency: AU_prefix_and
 
 ### AU_absval
-* Absolute value for 2's compl
+* Absolute value for 2's compl. number
 * Dependency: AU_prefix_and
 
 ### AU_addsub

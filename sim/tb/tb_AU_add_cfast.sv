@@ -76,7 +76,7 @@ module tb_AU_add_cfast;
 
         #(Cycle);
         num_test++;
-        if (s !== s_ref) begin
+        if (s !== s_ref || co !== co_ref) begin
             $display("Fail    a(h_%0h)  b(h_%0h)  ci(b_%0b)  s(h_%0h)  co(b_%0b)  s_ref(h_%0h)  co_ref(b_%0b)",
                      a, b, ci, s, co, s_ref, co_ref);
             num_fail++;
