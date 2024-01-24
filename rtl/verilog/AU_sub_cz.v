@@ -1,7 +1,10 @@
 //==============================================================================
-// AU_sub.v
+// AU_sub_cz.v
 //
-// Binary subtractor using parallel-prefix carry-lookahead logic.
+// Binary subtractor using parallel-prefix carry-lookahead logic with:
+//   - carry-in (ci), subtracted
+//   - carry-out (co), '1' if subtraction result is negative
+//   - zero flag (z), only valid for ci = 0
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -10,14 +13,17 @@
 //==============================================================================
 
 
-module AU_sub #(
+module AU_sub_cz #(
     parameter integer WIDTH = 8,  // word length of input (>= 1)
     parameter integer ARCH  = 0   // architecture (0 to 2)
 ) (
     // Data interface
-    input  [WIDTH-1:0] a,  // minuend
-    input  [WIDTH-1:0] b,  // subtrahend
-    output [WIDTH-1:0] s   // difference
+    input  [WIDTH-1:0] a,   // minuend
+    input  [WIDTH-1:0] b,   // subtrahend
+    input              ci,  // carry-in
+    output [WIDTH-1:0] s,   // difference
+    output             co,  // carry-out
+    output             z    // zero flag
 );
 
 
@@ -28,29 +34,32 @@ module AU_sub #(
         wire [WIDTH-1:0] pi;
         wire [WIDTH-1:0] pt;
         wire [WIDTH-1:0] go;
+        wire [WIDTH-1:0] po;
 
         // Invert b for subtraction
         assign bi = ~b;
 
         // Calculate prefix input generate/propagate signal (0)
-        assign gi[0] = a[0] | bi[0];
-        assign pi[0] = 1'b0;
+        assign gi[0] = (a[0] & bi[0]) | (a[0] & (~ci)) | (bi[0] & (~ci));
+        assign pi[0] = a[0] ^ bi[0];
 
         // Calculate adder propagate signal (0) (pt = a xor b)
-        assign pt[0] = a[0] ^ bi[0];
+        assign pt[0] = pi[0];
 
         if (WIDTH >= 2) begin : g_gi_pi_pt
             // Calculate prefix input generate/propagate signals (1 to WIDTH-1)
             assign gi[WIDTH - 1 : 1] = a[WIDTH - 1 : 1] & bi[WIDTH - 1 : 1];
-            assign pi[WIDTH - 1 : 1] = a[WIDTH - 1 : 1] | bi[WIDTH - 1 : 1];
+            assign pi[WIDTH - 1 : 1] = a[WIDTH - 1 : 1] ^ bi[WIDTH - 1 : 1];
 
             // Calculate adder propagate signals (1 to WIDTH-1) (pt = a xor b)
-            assign pt[WIDTH - 1 : 1] = (~gi[WIDTH - 1 : 1]) & pi[WIDTH - 1 : 1];
+            assign pt[WIDTH - 1 : 1] = pi[WIDTH - 1 : 1];
         end
 
         if (WIDTH == 1) begin : g_s_1
-            // Calculate sum bit
-            assign s = ~pt;
+            // Calculate sum bit, carry-out bit, and zero flag
+            assign s = pt ^ (~ci);
+            assign co = ~gi;
+            assign z = pi;
         end else begin : g_s_2
             // Calculate prefix output generate/propagate signals
             AU_prefix_and_or #(
@@ -60,11 +69,13 @@ module AU_sub #(
                 .gi(gi),
                 .pi(pi),
                 .go(go),
-                .po()
+                .po(po)
             );
 
-            // Calculate sum bits
-            assign s = pt ^ {go[WIDTH - 2 : 0], 1'b1};
+            // Calculate sum bits, carry-out bit, and zero flag
+            assign s = pt ^ {go[WIDTH - 2 : 0], ~ci};
+            assign co = ~go[WIDTH - 1];
+            assign z = po[WIDTH - 1];
         end
     endgenerate
 

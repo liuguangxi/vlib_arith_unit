@@ -104,6 +104,10 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Subtractor
 * Dependency: AU_prefix_and_or
 
+### AU_sub_cz
+* Subtractor with carry-in, carry-out and zero flag
+* Dependency: AU_prefix_and_or
+
 ### AU_neg
 * 2's complementer
 * Dependency: AU_prefix_and
