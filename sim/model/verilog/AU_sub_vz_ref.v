@@ -1,9 +1,11 @@
 //==============================================================================
-// AU_add_v_ref.v
+// AU_sub_vz_ref.v
 //
-// Behavioral model of AU_add_v.
-// Binary adder using parallel-prefix carry-lookahead logic with:
-// carry-in (ci) and 2's complement overflow flag (v)
+// Behavioral model of AU_sub_cz.
+// Binary subtractor using parallel-prefix carry-lookahead logic with:
+//   - carry-in (ci), subtracted
+//   - 2's complement overflow flag (v)
+//   - zero flag (z), only valid for ci = 0
 //------------------------------------------------------------------------------
 // Copyright (c) 2023 Guangxi Liu
 //
@@ -12,16 +14,17 @@
 //==============================================================================
 
 
-module AU_add_v_ref #(
+module AU_sub_vz_ref #(
     parameter integer WIDTH = 8,  // word length of input (>= 1)
     parameter integer ARCH  = 0   // architecture (0 to 2)
 ) (
     // Data interface
-    input  [WIDTH-1:0] a,   // augend
-    input  [WIDTH-1:0] b,   // addend
+    input  [WIDTH-1:0] a,   // minuend
+    input  [WIDTH-1:0] b,   // subtrahend
     input              ci,  // carry-in
-    output [WIDTH-1:0] s,   // sum
-    output             v    // overflow flag
+    output [WIDTH-1:0] s,   // difference
+    output             v,   // overflow flag
+    output             z    // zero flag
 );
 
 
@@ -30,9 +33,10 @@ module AU_add_v_ref #(
     localparam signed [WIDTH:0] MinSgn = {2'b11, {(WIDTH - 1) {1'b0}}};
     wire signed [WIDTH:0] temp;
 
-    assign temp = $signed({a[WIDTH - 1], a}) + $signed({b[WIDTH - 1], b}) + $signed({{WIDTH{1'b0}}, ci});
+    assign temp = $signed({a[WIDTH - 1], a}) - $signed({b[WIDTH - 1], b}) - $signed({{WIDTH{1'b0}}, ci});
     assign s = temp[WIDTH - 1 : 0];
     assign v = (temp >= MinSgn && temp <= MaxSgn) ? 1'b0 : 1'b1;
+    assign z = (temp == 'b0) ? 1'b1 : 1'b0;
 
 
     // Parameter legality check
