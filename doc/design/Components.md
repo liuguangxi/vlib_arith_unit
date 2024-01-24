@@ -108,6 +108,10 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Subtractor with carry-in, carry-out and zero flag
 * Dependency: AU_prefix_and_or
 
+### AU_sub_vz
+* Subtractor with carry-in, 2's compl. overflow flag and zero flag
+* Dependency: AU_prefix_and_or
+
 ### AU_neg
 * 2's complementer
 * Dependency: AU_prefix_and
@@ -122,6 +126,14 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 
 ### AU_addsub
 * Adder-Subtractor
+* Dependency: AU_prefix_and_or
+
+### AU_addsub_c
+* Adder-Subtractor with carry-in and carry-out
+* Dependency: AU_prefix_and_or
+
+### AU_addsub_v
+* Adder-Subtractor with carry-in and 2's compl. overflow flag
 * Dependency: AU_prefix_and_or
 
 ### AU_sum_zero_det
