@@ -100,6 +100,10 @@ The Verilog code could be supported by recent synthesis and simulation tools, li
 * Adder with carry-in and 2's compl. overflow flag
 * Dependency: AU_prefix_and_or
 
+### AU_add_csv
+* Carry-save adder (3 operands)
+* Dependency: AU_full_adder
+
 ### AU_sub
 * Subtractor
 * Dependency: AU_prefix_and_or
